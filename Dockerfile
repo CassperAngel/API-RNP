@@ -1,6 +1,9 @@
 FROM python:3.10-slim
 
-# Instalar todas las dependencias del sistema necesarias
+# Usar repositorios estables
+RUN echo "deb http://deb.debian.org/debian bullseye main" > /etc/apt/sources.list
+
+# Instalar dependencias mínimas necesarias
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
@@ -17,11 +20,6 @@ RUN apt-get update && apt-get install -y \
     libgbm1 \
     libxss1 \
     libasound2 \
-    libpangocairo-1.0-0 \
-    libpango-1.0-0 \
-    libcairo2 \
-    libgdk-pixbuf2.0-0 \
-    libgtk-3-0 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
