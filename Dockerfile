@@ -31,10 +31,5 @@ RUN playwright install chromium
 # Copiar el código de la aplicación
 COPY . .
 
-# Crear script de inicio
-RUN echo '#!/bin/bash' > start.sh && \
-    echo 'uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}' >> start.sh && \
-    chmod +x start.sh
-
-# Usar el script de inicio
-CMD ["./start.sh"]
+# Usar puerto fijo - Railway redirigirá automáticamente
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
