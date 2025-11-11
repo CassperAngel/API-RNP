@@ -1,9 +1,6 @@
 FROM python:3.10-slim
 
-# Usar repositorios estables
-RUN echo "deb http://deb.debian.org/debian bullseye main" > /etc/apt/sources.list
-
-# Instalar dependencias mínimas necesarias
+# Instalar todas las dependencias del sistema necesarias
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
@@ -27,7 +24,8 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 RUN playwright install chromium
-RUN playwright install-deps
+
+# NOTA: Eliminamos 'playwright install-deps' porque ya instalamos las dependencias manualmente
 
 COPY . .
 
