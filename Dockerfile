@@ -21,10 +21,20 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
+# Copiar requirements e instalar dependencias Python
 COPY requirements.txt .
 RUN pip install -r requirements.txt
+
+# Instalar Playwright y Chromium
 RUN playwright install chromium
 
+# Copiar el código de la aplicación
 COPY . .
 
-CMD uvicorn main:app --host 0.0.0.0 --port $PORT
+# Crear script de inicio
+RUN echo '#!/bin/bash' > start.sh && \
+    echo 'uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}' >> start.sh && \
+    chmod +x start.sh
+
+# Usar el script de inicio
+CMD ["./start.sh"]
