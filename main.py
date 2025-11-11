@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 import asyncio
 import re
 import logging
+import os
 from playwright.async_api import async_playwright
 
 logging.basicConfig(level=logging.INFO)
@@ -27,17 +28,22 @@ async def scrape_rnp(ruc: str):
         logger.info(f"Iniciando scraping para RUC: {ruc}")
         
         async with async_playwright() as p:
-            # Configuración del navegador - CORREGIDO
+            # Configuración del navegador optimizada
             browser = await p.chromium.launch(
                 headless=True,
-                args=['--no-sandbox', '--disable-setuid-sandbox']
+                args=[
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage',
+                    '--disable-gpu',
+                    '--single-process'
+                ]
             )
-            # CORREGIDO: new_page() en lugar de newPage()
+            
             page = await browser.new_page()
         
-            # Configuración inicial - CORREGIDO
+            # Configuración inicial
             await page.set_viewport_size({"width": 1280, "height": 800})
-            # CORREGIDO: set_default_timeout en lugar de set.default_timeout
             page.set_default_timeout(80000)
 
             # Paso 1: Navegar a la página principal
@@ -143,8 +149,6 @@ async def scrape_rnp(ruc: str):
 
     except Exception as error:
         logger.error(f"Error en scraping RUC {ruc}: {error}")
-        if page:
-            await page.screenshot(path=f'error_{ruc}.png')
         return {
             'ruc': ruc,
             'error': str(error),
@@ -171,9 +175,11 @@ async def consultar_rnp(ruc: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# INICIO CORREGIDO - Maneja correctamente el puerto
 if __name__ == "__main__":
     import uvicorn
-    print("🚀 Iniciando API RNP con Playwright...")
-    print("📝 URL: http://localhost:8002")
-    print("📚 Docs: http://localhost:8002/docs")
-    uvicorn.run(app, host="0.0.0.0", port=8002, log_level="info")
+    port = int(os.environ.get("PORT", 8000))
+    print(f"🚀 Iniciando API RNP en puerto {port}...")
+    print(f"📝 URL: http://0.0.0.0:{port}")
+    print(f"📚 Docs: http://0.0.0.0:{port}/docs")
+    uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
