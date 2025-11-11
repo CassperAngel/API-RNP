@@ -1,35 +1,31 @@
 FROM python:3.10-slim
 
-# Instalar todas las dependencias del sistema necesarias
+# Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
     libnss3 \
-    libnspr4 \
     libatk1.0-0 \
     libatk-bridge2.0-0 \
     libcups2 \
-    libdrm2 \
-    libxkbcommon0 \
     libxcomposite1 \
     libxdamage1 \
     libxrandr2 \
     libgbm1 \
     libxss1 \
-    libasound2 \
-    && rm -rf /var/lib/apt/lists/*
+    libasound2
 
-WORKDIR /app
+# Instalar dependencias Python
+RUN pip install fastapi uvicorn playwright
 
-# Copiar requirements e instalar dependencias Python
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-
-# Instalar Playwright y Chromium
+# Instalar Chromium
 RUN playwright install chromium
 
-# Copiar el código de la aplicación
+# Crear directorio de trabajo
+WORKDIR /app
+
+# Copiar código
 COPY . .
 
-# Usar puerto fijo - Railway redirigirá automáticamente
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Ejecutar la aplicación con puerto fijo
+CMD ["python", "main.py"]
