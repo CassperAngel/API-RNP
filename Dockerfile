@@ -17,23 +17,16 @@ RUN apt-get update && apt-get install -y \
     libgbm1 \
     libxss1 \
     libasound2 \
-    libpangocairo-1.0-0 \
-    libpango-1.0-0 \
-    libcairo2 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copiar requirements e instalar dependencias Python
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-# Instalar Playwright y Chromium
-RUN playwright install chromium
+# FORZAR la instalación completa de Chromium
+RUN playwright install --with-deps chromium
 
-# Copiar el código de la aplicación
 COPY . .
 
-# Ejecutar la aplicación
 CMD ["python", "main.py"]
-
