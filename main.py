@@ -173,14 +173,10 @@ async def consultar_rnp(ruc: str):
             raise HTTPException(status_code=404, detail=result['error'])
         return JSONResponse(content=result)
     except Exception as e:
-        logger.error(f"Error en scraping RUC {ruc}: {error}")
-        return {
-            'ruc': ruc,
-            'error': str(error),
-            'status': 'error'
-        }
+        logger.error(f"Error en endpoint consultar_rnp: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
-# INICIO CORREGIDO - Maneja correctamente el puerto
+# INICIO CORREGIDO
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))
@@ -188,4 +184,3 @@ if __name__ == "__main__":
     print(f"📝 URL: http://0.0.0.0:{port}")
     print(f"📚 Docs: http://0.0.0.0:{port}/docs")
     uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")
-
