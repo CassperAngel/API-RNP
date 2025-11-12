@@ -1,16 +1,13 @@
 FROM python:3.10-slim
 
-# Instalar dependencias del sistema para Playwright/Chrome
+# Instalar dependencias del sistema MÍNIMAS necesarias
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
     libnss3 \
-    libnspr4 \
     libatk1.0-0 \
     libatk-bridge2.0-0 \
     libcups2 \
-    libdrm2 \
-    libxkbcommon0 \
     libxcomposite1 \
     libxdamage1 \
     libxrandr2 \
@@ -24,8 +21,8 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-# FORZAR la instalación completa de Chromium
-RUN playwright install --with-deps chromium
+# SOLO instalar Chromium sin dependencias adicionales
+RUN playwright install chromium
 
 COPY . .
 
