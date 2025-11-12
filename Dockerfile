@@ -35,4 +35,5 @@ RUN playwright install chromium
 COPY . .
 
 # Ejecutar la aplicación
-CMD ["python", "main.py"]
+CMD exec uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
+
