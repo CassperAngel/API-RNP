@@ -1,4 +1,5 @@
-FROM python:3.10-slim
+FROM python:3.10-slim-bullseye
+
 
 # Instalar dependencias del sistema necesarias para Chromium/Playwright
 RUN apt-get update && apt-get install -y \
