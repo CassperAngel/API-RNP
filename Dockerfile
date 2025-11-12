@@ -1,6 +1,6 @@
 FROM python:3.10-slim
 
-# Instalar dependencias del sistema MÍNIMAS necesarias
+# Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
@@ -18,11 +18,12 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
+# Copiar requirements actualizado
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-# SOLO instalar Chromium sin dependencias adicionales
-RUN playwright install chromium
+# Forzar instalación limpia de Chromium
+RUN playwright install chromium --force
 
 COPY . .
 
